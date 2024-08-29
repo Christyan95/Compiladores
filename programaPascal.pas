@@ -1,5 +1,4 @@
 { Programa que calcula o salario de funcionarios }
-' sdasdAa A '
 Program CalcularSalario;
 Var TempoEmAnos, ValorSalario, a, b, c : Integer; 
 Begin 
