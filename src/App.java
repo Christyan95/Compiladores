@@ -1,7 +1,3 @@
-import lexico.Classe;
-import lexico.Lexico;
-import lexico.TabelaSimbolos;
-import lexico.Token;
 import sintatico.Sintatico;
 
 public class App {
@@ -17,7 +13,8 @@ public class App {
     // TabelaSimbolos tabelaSimbolos = lexico.getTabelaSimbolos();
     // System.out.println(tabelaSimbolos);
 
-        Sintatico sintatico = new Sintatico("programaPascal.pas");
-        sintatico.analisar();
+    Sintatico sintatico = new Sintatico("programaPascal.pas");
+
+    sintatico.analisar();
     }
 }

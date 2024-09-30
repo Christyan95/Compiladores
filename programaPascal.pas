@@ -1,5 +1,10 @@
 { Programa que calcula o salario de funcionarios }
+
+
 Program CalcularSalario;
+
+
+
 Var TempoEmAnos, ValorSalario, a, b, c : Integer; 
 Begin 
     If (TempoEmAnos > 10) Then
