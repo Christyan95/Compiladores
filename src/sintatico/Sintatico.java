@@ -32,7 +32,7 @@ public class Sintatico{
         if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("program")) {
             token = lexico.nextToken();
 
-            if (token.getClasse() == Classe.indentificador) {
+            if (token.getClasse() == Classe.identificador) {
                 token = lexico.nextToken();
 
                 // {A01}
@@ -92,6 +92,7 @@ public class Sintatico{
             token = lexico.nextToken();
 
             dvar();
+
             mais_dc();
         }
     }
@@ -108,6 +109,7 @@ public class Sintatico{
             tipo_var();
 
             // {A02}
+
         } else {
             System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou dois pontos (:) depois da declaração de variáveis");
         }
@@ -117,7 +119,7 @@ public class Sintatico{
 
     //<variaveis> ::= id {A03} <mais_var>
     public void variaveis() {
-        if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+        if (token.getClasse() == Classe.identificador) {
             token = lexico.nextToken();
 
             // {A03}
@@ -165,10 +167,13 @@ public class Sintatico{
 
     //<cont_dc> ::= <dvar> <mais_dc> | ε
     public void cont_dc() {
-        if(token.getClasse() == Classe.indentificador)
+        if(token.getClasse() == Classe.identificador)
         {
             dvar();
+
             mais_dc();
+        } else {
+            System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou identificador");
         }
     }
 
@@ -188,7 +193,7 @@ public class Sintatico{
         if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("procedure")) {
             token = lexico.nextToken();
 
-            if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+            if (token.getClasse() == Classe.identificador) {
                 token = lexico.nextToken();
 
                 // {A04}
@@ -260,7 +265,7 @@ public class Sintatico{
 
     //<lista_id> ::= id {A07} <cont_lista_id>
     public void lista_id() {
-        if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+        if (token.getClasse() == Classe.identificador) {
             token = lexico.nextToken();
 
             // {A07}
@@ -310,7 +315,7 @@ public class Sintatico{
         if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("function")) {
             token = lexico.nextToken();
 
-            if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+            if (token.getClasse() == Classe.identificador) {
                 token = lexico.nextToken();
 
                 // {A05}
@@ -355,6 +360,7 @@ public class Sintatico{
     //<sentencas> ::= <comando> <mais_sentencas>
     public void sentencas() {
         comando();
+
         mais_sentencas();
     }
 
@@ -416,6 +422,8 @@ public class Sintatico{
     
                 if (token.getClasse() == Classe.parentesesDireito) {
                     token = lexico.nextToken();
+
+                    // {A61}
                 } else {
                     System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses direito ()) no fim do var_read");
                 }
@@ -423,13 +431,12 @@ public class Sintatico{
                 System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses esquedo (() no começo do var_read");
             }
 
-            // {A61}
         }
 
         else if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("for")) {
             token = lexico.nextToken();
 
-            if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+            if (token.getClasse() == Classe.identificador) {
                 token = lexico.nextToken();
 
                 // {A57}
@@ -487,14 +494,14 @@ public class Sintatico{
         
                     if (token.getClasse() == Classe.parentesesDireito) {
                         token = lexico.nextToken();
+
+                        // {A15}
                     } else {
                         System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses direito ()) no fim do var_read");
                     }
                 } else {
                     System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses esquedo (() no começo do var_read");
                 }
-
-                // {A15}
             }
         }
 
@@ -510,36 +517,38 @@ public class Sintatico{
     
                 if (token.getClasse() == Classe.parentesesDireito) {
                     token = lexico.nextToken();
+
+                    // {A17}
+
+                    if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("do")) {
+                        token = lexico.nextToken();
+        
+                        if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("begin")) {
+                            token = lexico.nextToken();
+        
+                            sentencas();
+        
+                            if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("end")) {
+                                token = lexico.nextToken();
+        
+                                // {A18}
+                            } else {
+                                System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses direito ()) no fim do var_read");
+                            }
+                        } else {
+                            System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses direito ()) no fim do var_read");
+                        }
+                    }
                 } else {
                     System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses direito ()) no fim do var_read");
                 }
             } else {
                 System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses esquedo (() no começo do var_read");
-            }
-
-            // {A17}
-
-            if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("do")) {
-                token = lexico.nextToken();
-
-                if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("begin")) {
-                    token = lexico.nextToken();
-
-                    sentencas();
-
-                    if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("end")) {
-                        token = lexico.nextToken();
-
-                        // {A18}
-                    }
-                }
-            }
+            }           
         }
 
         else if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("if")) {
             token = lexico.nextToken();
-
-            // {A16}
 
             if (token.getClasse() == Classe.parentesesEsquerdo) {
                 token = lexico.nextToken();
@@ -548,37 +557,43 @@ public class Sintatico{
     
                 if (token.getClasse() == Classe.parentesesDireito) {
                     token = lexico.nextToken();
+
+                    // {A19}
+
+                    if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("then")) {
+                        token = lexico.nextToken();
+        
+                        if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("begin")) {
+                            token = lexico.nextToken();
+        
+                            sentencas();
+        
+                            if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("end")) {
+                                token = lexico.nextToken();
+        
+                                // {A20}
+        
+                                pfalsa();
+        
+                                // {A21}
+                            } else {
+                                System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses direito ()) no fim do var_read");
+                            }
+                        } else {
+                            System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses direito ()) no fim do var_read");
+                        }
+                    } else {
+                        System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses direito ()) no fim do var_read");
+                    }
                 } else {
                     System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses direito ()) no fim do var_read");
                 }
             } else {
                 System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses esquedo (() no começo do var_read");
-            }
-
-            // {A19}
-
-            if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("then")) {
-                token = lexico.nextToken();
-
-                if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("begin")) {
-                    token = lexico.nextToken();
-
-                    sentencas();
-
-                    if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("end")) {
-                        token = lexico.nextToken();
-
-                        // {A20}
-
-                        pfalsa();
-
-                        // {A21}
-                    }
-                }
-            }
+            }            
         }
 
-        else if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+        else if (token.getClasse() == Classe.identificador) {
             token = lexico.nextToken();
 
             // {A49}
@@ -616,16 +631,18 @@ public class Sintatico{
                     token = lexico.nextToken();
                 }
             }
+        } else {
+            System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: vazio (ε)");
         }
-        // else {
-        //     System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: vazio (ε)");
-        // }
     }
 
 
 
+    //
+    //
+    //
     public void chamada_procedimento() {
-        if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+        if (token.getClasse() == Classe.identificador) {
             token = lexico.nextToken();
 
             // {A50}
@@ -877,13 +894,16 @@ public class Sintatico{
 
 
     public void fator() {
-        if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+        if (token.getClasse() == Classe.identificador) {
             token = lexico.nextToken();
 
             // {A55}
         }
 
-        else if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("intnum")) {
+        //
+        //
+        //
+        else if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("integer")) {
             token = lexico.nextToken();
 
             // {A41}
@@ -903,7 +923,7 @@ public class Sintatico{
             System.err.println(token.getLinha() + "," + token.getColuna() + " - " + "Erro sintático: faltou parenteses esquedo (() no começo do var_read");
         }
         
-        if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+        if (token.getClasse() == Classe.identificador) {
             token = lexico.nextToken();
 
             // {A60}
@@ -937,7 +957,7 @@ public class Sintatico{
 
     //<var_read> ::= id {A08} <mais_var_read>
     public void var_read() {
-        if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+        if (token.getClasse() == Classe.identificador) {
             token = lexico.nextToken();
 
             // {A08}
@@ -963,7 +983,7 @@ public class Sintatico{
 
     //<exp_write> ::= id {A09} <mais_exp_write> |
     public void exp_write() {
-        if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("id")) {
+        if (token.getClasse() == Classe.identificador) {
             token = lexico.nextToken();
 
             // {A09}
@@ -979,7 +999,7 @@ public class Sintatico{
             mais_exp_write();
         }
         
-        else if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("intnum")) {
+        else if (token.getClasse() == Classe.palavraReservada && token.getValor().getTexto().equalsIgnoreCase("integer")) {
             token = lexico.nextToken();
 
             // {A43}
