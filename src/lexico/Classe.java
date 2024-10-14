@@ -17,8 +17,11 @@ public enum Classe{
     operadorMenor, // <
     operadorMaiorIgual, // >=
     operadorMenorIgual, // <=
-    operadorDiferente, // <>
+    operadorDiferente, // <>s
     operadorIgual,  // =
+    operadorE,  // and
+    operadorOu,  // or
+    operadorNegacao,  // not
     parentesesEsquerdo, // (
     parentesesDireito, // )
     string, //''
